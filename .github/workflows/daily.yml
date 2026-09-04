@@ -1,0 +1,33 @@
+name: Daily Contribution
+
+on:
+  schedule:
+    - cron: "0 0 * * *"   # Runs every day at 00:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Update timestamp
+        run: |
+          echo "$(date)" > activity.txt
+
+      - name: Commit
+        run: |
+          git add .
+          git commit -m "Daily contribution" || exit 0
+
+      - name: Push
+        run: git push
